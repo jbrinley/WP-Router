@@ -5,73 +5,61 @@
  * Time: 12:29 PM
  */
  
-class WP_Router {
-	const PLUGIN_NAME = 'WP Router';
-	const TEXT_DOMAIN = 'wp-router';
-	const DEBUG = FALSE;
-	const MIN_PHP_VERSION = '5.2';
-	const MIN_WP_VERSION = '3.1';
-	const VERSION = '0.1';
-	const DB_VERSION = 1;
-	const PLUGIN_INIT_HOOK = 'wp_router_init';
+class WP_Router extends WP_Router_Utility {
+	private static $routes = array();
+	private static $query_vars = array();
 
+	/****************************************************
+	 * PUBLIC API
+	 ****************************************************/
 
-	/**
-	 * A wrapper around WP's __() to add the plugin's text domain
-	 *
-	 * @param string $string
-	 * @return string|void
-	 */
-	public static function __( $string ) {
-		return __($string, self::TEXT_DOMAIN);
+	public static function add_route( $id, array $rules ) {
+		// TODO
 	}
 
-	/**
-	 * A wrapper around WP's _e() to add the plugin's text domain
-	 *
-	 * @param string $string
-	 * @return void
-	 */
-	public static function _e( $string ) {
-		return _e($string, self::TEXT_DOMAIN);
+	public static function get_route( $id ) {
+		// TODO
 	}
 
-	/**
-	 * @static
-	 * @return string The system path to this plugin's directory, with no trailing slash
-	 */
-	public static function plugin_path() {
-		return WP_PLUGIN_DIR . '/' . basename( dirname( __FILE__ ) );
+	public static function edit_route( $id, array $changes ) {
+		// TODO
 	}
 
-	/**
-	 * @static
-	 * @return string The url to this plugin's directory, with no trailing slash
-	 */
-	public static function plugin_url() {
-		return WP_PLUGIN_URL . '/' . basename( dirname( __FILE__ ) );
+	public static function remove_route( $id ) {
+		// TODO
 	}
 
-	/**
-	 * Check that the minimum PHP and WP versions are met
-	 *
-	 * @static
-	 * @param string $php_version
-	 * @param string $wp_version
-	 * @return bool Whether the test passed
-	 */
-	public static function prerequisites_met( $php_version, $wp_version ) {
-		$pass = TRUE;
-		$pass = $pass && version_compare( $php_version, self::MIN_PHP_VERSION, '>=');
-		$pass = $pass && version_compare( $wp_version, self::MIN_WP_VERSION, '>=');
-		return $pass;
+	/****************************************************
+	 * PLUMBING
+	 ****************************************************/
+
+	public static function init() {
+		add_action('init', array(get_class(), 'generate_routes'), 1000, 0);
+		add_action('parse_request', array(get_class(), 'parse_request'), 10, 1);
+		add_filter('rewrite_rules_array', array(get_class(), 'add_rewrite_rules'), 10, 1);
 	}
 
-	public static function failed_to_load_notices( $php_version = self::MIN_PHP_VERSION, $wp_version = self::MIN_WP_VERSION ) {
-		printf( '<div class="error"><p>%s</p></div>', sprintf( self::__( 'WP Router requires WordPress %1$s or higher and PHP %2$s or higher.' ), $wp_version, $php_version ) );
+	public static function generate_routes() {
+		do_action('wp_router_generate_routes');
+		do_action('wp_router_alter_routes');
 	}
 
-	public static function initialized() {
-		do_action(self::PLUGIN_INIT_HOOK);
+	public static function add_rewrite_rules( $rules ) {
+		$new_rules = array();
+		foreach ( self::$routes as $id => $route ) {
+			$new_rules = array_merge($new_rules, $route->rewrite_rules());
+		}
+		return $new_rules + $rules;
+	}
+
+	public static function parse_request( WP $query ) {
+		if ( !isset($query->query_vars[WP_Route::QUERY_VAR]) ) {
+			return;
+		}
+		$route = $query->query_vars[WP_Route::QUERY_VAR];
+		if ( !isset(self::$routes[$route]) || !is_a(self::$routes[$route], 'WP_Route') ) {
+			return;
+		}
+		self::$routes[$route]->execute($query->query_vars);
 	}
 }
