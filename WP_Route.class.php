@@ -134,7 +134,7 @@ class WP_Route extends WP_Router_Utility {
 	 * @param int $matches
 	 * @return string
 	 */
-	public function preg_index( $int ) {
+	protected function preg_index( $int ) {
 		global $wp_rewrite;
 		return $wp_rewrite->preg_index($int);
 	}
