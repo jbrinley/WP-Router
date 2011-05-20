@@ -168,7 +168,7 @@ class WP_Router extends WP_Router_Utility {
 	 */
 	public function parse_request( WP $query ) {
 		if ( $id = $this->identify_route($query) ) {
-			$this->routes[$id]->execute($query->query_vars);
+			$this->routes[$id]->execute($query);
 		}
 	}
 

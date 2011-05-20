@@ -91,11 +91,100 @@ class WP_Route extends WP_Router_Utility {
 	/**
 	 * Execute the callback function for this route.
 	 *
-	 * @param array $query_vars
+	 * @param WP $query_vars
 	 * @return void
 	 */
-	public function execute( array $query_vars ) {
-		// TODO
+	public function execute( WP $query ) {
+		// check access
+		if ( !$this->check_access($query) ) {
+			return; // can't get in
+		}
+
+		// do the callback
+		$page = $this->get_page($query);
+		
+		// if we have content, set up the page
+		if ( $page === FALSE ) {
+			return; // callback explicitly told us not to do anything with output
+		}
+
+		$title = $this->get_title($query);
+
+		// TODO: set up the page
+
+		// TODO: do something with the template
+	}
+
+	private function get_page( WP $query ) {
+		if ( !is_callable($this->page_callback) ) {
+			return FALSE; // can't call it
+		}
+		$args = $this->get_query_args($query, 'page');
+		ob_start();
+		$returned = call_user_func_array($this->page_callback, $args);
+		$echoed = ob_get_clean();
+
+		if ( $returned === FALSE ) {
+			return FALSE;
+		}
+
+		return $echoed.$returned;
+	}
+
+	private function get_title( WP $query ) {
+		if ( !is_callable($this->title_callback) ) {
+			return $this->title; // can't call it
+		}
+		$args = $this->get_query_args($query, 'title');
+		if ( !$args ) {
+			$args = array($this->title);
+		}
+		$title = call_user_func_array($this->title_callback, $args);
+
+		if ( $title === FALSE ) {
+			return $this->title;
+		}
+
+		return $title;
+	}
+
+	private function check_access( WP $query ) {
+		if ( $this->access_callback === FALSE ) {
+			return FALSE; // nobody gets in
+		}
+		if ( is_callable($this->access_callback) ) {
+			$args = $this->get_query_args($query, 'access');
+			return (bool)call_user_func_array($this->access_callback, $args);
+		}
+		return (bool)$this->access_callback;
+
+	}
+
+	private function get_query_args( WP $query, $callback_type = 'page' ) {
+		$property = $callback_type.'_arguments';
+		$args = array();
+		if ( $this->$property ) {
+			foreach ( $this->$property as $query_var ) {
+				if ( $this->is_a_query_var($query_var, $query) ) {
+					if ( isset($query->query_vars[$query_var]) ) {
+						$args[] = $query->query_vars[$query_var];
+					} else {
+						$args[] = NULL;
+					}
+				} else {
+					$args[] = $query_var;
+				}
+			}
+		}
+		return $args;
+	}
+
+	private function is_a_query_var( $var, WP $query ) {
+		// $query->public_query_vars should be set and filtered before we get here
+		if ( in_array($var, $query->public_query_vars) ) {
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 	/**
