@@ -6,8 +6,6 @@
  */
  
 class WP_Route extends WP_Router_Utility {
-	const QUERY_VAR = 'WP_Route';
-	
 	private $id = '';
 	private $path = '';
 	private $query_vars = array();
@@ -101,18 +99,35 @@ class WP_Route extends WP_Router_Utility {
 		}
 
 		// do the callback
-		$page = $this->get_page($query);
+		$page_contents = $this->get_page($query);
 		
 		// if we have content, set up the page
-		if ( $page === FALSE ) {
+		if ( $page_contents === FALSE ) {
 			return; // callback explicitly told us not to do anything with output
 		}
 
 		$title = $this->get_title($query);
 
-		// TODO: set up the page
+		$page = new WP_Router_Page($page_contents, $title);
 
 		// TODO: do something with the template
+	}
+
+	/**
+	 * @return array WordPress rewrite rules that should point to this instance's callback
+	 */
+	public function rewrite_rules() {
+		$this->generate_rewrite();
+		return array(
+			$this->path => $this->wp_rewrite,
+		);
+	}
+
+	/**
+	 * @return array All query vars used by this route
+	 */
+	public function get_query_vars() {
+		return array_keys($this->query_vars);
 	}
 
 	private function get_page( WP $query ) {
@@ -185,16 +200,6 @@ class WP_Route extends WP_Router_Utility {
 			return TRUE;
 		}
 		return FALSE;
-	}
-
-	/**
-	 * @return array WordPress rewrite rules that should point to this instance's callback
-	 */
-	public function rewrite_rules() {
-		$this->generate_rewrite();
-		return array(
-			$this->path => $this->wp_rewrite,
-		);
 	}
 
 	/**

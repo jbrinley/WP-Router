@@ -6,6 +6,7 @@
  */
  
 class WP_Router_Utility {
+	const QUERY_VAR = 'WP_Route';
 	const PLUGIN_NAME = 'WP Router';
 	const TEXT_DOMAIN = 'wp-router';
 	const DEBUG = FALSE;
@@ -14,9 +15,6 @@ class WP_Router_Utility {
 	const VERSION = '0.1';
 	const DB_VERSION = 1;
 	const PLUGIN_INIT_HOOK = 'wp_router_init';
-	const POST_TYPE = 'WP_Router';
-	private static $rewrite_slug = 'WP_Router';
-	private static $post_id = 0; // The ID of the post this plugin uses
 
 
 	/**
@@ -75,33 +73,6 @@ class WP_Router_Utility {
 	}
 
 	public static function init() {
-		self::register_post_type();
 		do_action(self::PLUGIN_INIT_HOOK);
-	}
-
-	/**
-	 * Register a post type to use when displaying pages
-	 * @static
-	 * @return void
-	 */
-	private static function register_post_type() {
-		// a very quiet post type
-		$args = array(
-			'public' => FALSE,
-			'show_ui' => FALSE,
-			'exclude_from_search' => TRUE,
-			'publicly_queryable' => TRUE,
-			'show_in_menu' => FALSE,
-			'show_in_nav_menus' => FALSE,
-			'supports' => array('title'),
-			'has_archive' => TRUE,
-			'rewrite' => array(
-				'slug' => self::$rewrite_slug,
-				'with_front' => FALSE,
-				'feeds' => FALSE,
-				'pages' => FALSE,
-			)
-		);
-		register_post_type(self::POST_TYPE, $args);
 	}
 }

@@ -8,7 +8,6 @@
 class WP_Router extends WP_Router_Utility {
 	const ROUTE_CACHE_OPTION = 'WP_Router_route_hash';
 	private $routes = array();
-	private $query_vars = array();
 
 	/**
 	 * @var WP_Router The one instance of this singleton class
@@ -113,6 +112,7 @@ class WP_Router extends WP_Router_Utility {
 		add_action('init', array($this, 'generate_routes'), 1000, 0);
 		add_action('parse_request', array($this, 'parse_request'), 10, 1);
 		add_filter('rewrite_rules_array', array($this, 'add_rewrite_rules'), 10, 1);
+		add_filter('query_vars', array($this, 'add_query_vars'), 10, 1);
 	}
 
 	private function __clone() {
@@ -138,8 +138,8 @@ class WP_Router extends WP_Router_Utility {
 	 * @return void
 	 */
 	public function generate_routes() {
-		do_action('wp_router_generate_routes');
-		do_action('wp_router_alter_routes');
+		do_action('wp_router_generate_routes', $this);
+		do_action('wp_router_alter_routes', $this);
 		$rules = $this->rewrite_rules();
 		if ( $this->hash($rules) != get_option(self::ROUTE_CACHE_OPTION) ) {
 			$this->flush_rewrite_rules();
@@ -157,6 +157,18 @@ class WP_Router extends WP_Router_Utility {
 		$new_rules = $this->rewrite_rules();
 		update_option(self::ROUTE_CACHE_OPTION, $this->hash($new_rules));
 		return $new_rules + $rules;
+	}
+
+	/**
+	 * Add all query vars from registered routes to WP's recognized query vars
+	 *
+	 * @param array $vars
+	 * @return array
+	 */
+	public function add_query_vars( $vars ) {
+		$route_vars = $this->query_vars();
+		$vars = array_merge($vars, $route_vars);
+		return $vars;
 	}
 
 	/**
@@ -179,10 +191,10 @@ class WP_Router extends WP_Router_Utility {
 	 * @return string|NULL
 	 */
 	private function identify_route( $query ) {
-		if ( !isset($query->query_vars[WP_Route::QUERY_VAR]) ) {
+		if ( !isset($query->query_vars[self::QUERY_VAR]) ) {
 			return NULL;
 		}
-		$id = $query->query_vars[WP_Route::QUERY_VAR];
+		$id = $query->query_vars[self::QUERY_VAR];
 		if ( !isset($this->routes[$id]) || !is_a($this->routes[$id], 'WP_Route') ) {
 			return NULL;
 		}
@@ -219,6 +231,20 @@ class WP_Router extends WP_Router_Utility {
 			$rules = array_merge($rules, $route->rewrite_rules());
 		}
 		return $rules;
+	}
+
+	/**
+	 * Get an array of all query vars used by registered routes
+	 *
+	 * @return array
+	 */
+	private function query_vars() {
+		$vars = array();
+		foreach ( $this->routes as $id => $route ) {
+			$vars = array_merge($vars, $route->rewrite_rules());
+		}
+		$vars[] = self::QUERY_VAR;
+		return $vars;
 	}
 
 	/**
