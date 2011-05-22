@@ -241,7 +241,7 @@ class WP_Router extends WP_Router_Utility {
 	private function query_vars() {
 		$vars = array();
 		foreach ( $this->routes as $id => $route ) {
-			$vars = array_merge($vars, $route->rewrite_rules());
+			$vars = array_merge($vars, $route->get_query_vars());
 		}
 		$vars[] = self::QUERY_VAR;
 		return $vars;

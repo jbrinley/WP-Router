@@ -12,7 +12,7 @@ class WP_Route extends WP_Router_Utility {
 	private $wp_rewrite = '';
 	private $title = '';
 	private $title_callback = '__';
-	private $title_arguments = array('');
+	private $title_arguments = array();
 	private $page_callback = '';
 	private $page_arguments = array();
 	private $access_callback = TRUE;

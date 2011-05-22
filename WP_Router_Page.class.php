@@ -92,6 +92,7 @@ class WP_Router_Page extends WP_Router_Utility {
 		add_action('pre_get_posts', array($this, 'edit_query'), 10, 1);
 		add_action('the_post', array($this, 'set_post_contents'), 10, 1);
 		add_filter('the_title', array($this, 'get_title'), 10, 2);
+		add_filter('single_post_title', array($this, 'get_single_post_title'), 10, 2);
 	}
 
 	/**
@@ -108,6 +109,7 @@ class WP_Router_Page extends WP_Router_Utility {
 
 			// override any vars WordPress set based on the original query
 			$query->is_single = TRUE;
+			$query->is_singular = TRUE;
 			$query->is_404 = FALSE;
 			$query->is_home = FALSE;
 		}
@@ -137,5 +139,9 @@ class WP_Router_Page extends WP_Router_Utility {
 			$title = $this->title;
 		}
 		return $title;
+	}
+
+	public function get_single_post_title( $title, $post ) {
+		return $this->get_title($title, $post->ID);
 	}
 }
