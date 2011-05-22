@@ -230,6 +230,7 @@ class WP_Route extends WP_Router_Utility {
 	 */
 	protected function preg_index( $int ) {
 		global $wp_rewrite;
+		$wp_rewrite->matches = 'matches'; // because it may not be set, yet
 		return $wp_rewrite->preg_index($int);
 	}
 }
