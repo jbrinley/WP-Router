@@ -15,7 +15,7 @@ for mapping URL strings to collections of posts. Every request is parsed
 into query variables and turned into a SQL query via `$wp_query->query()`.
 
 Sometimes, though, you don't want to display a list of posts. You just want
-a URL to map to a callback function, with the output displayed in places of
+a URL to map to a callback function, with the output displayed in place of
 posts in whatever theme you happen to be using.
 
 That's where WP Router comes in. It handles all the messy bits of registering
