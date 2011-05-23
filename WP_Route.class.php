@@ -95,6 +95,7 @@ class WP_Route extends WP_Router_Utility {
 	public function execute( WP $query ) {
 		// check access
 		if ( !$this->check_access($query) ) {
+			$this->access_denied();
 			return; // can't get in
 		}
 
@@ -172,7 +173,44 @@ class WP_Route extends WP_Router_Utility {
 			return (bool)call_user_func_array($this->access_callback, $args);
 		}
 		return (bool)$this->access_callback;
+	}
 
+	/**
+	 * Choose an action based on logged-in status when denied access
+	 *
+	 * @return void
+	 */
+	private function access_denied() {
+		$user_id = get_current_user_id();
+		if ( $user_id ) {
+			$this->error_403();
+		} else {
+			$this->login_redirect();
+		}
+	}
+
+	/**
+	 * Display a 403 error page
+	 *
+	 * @return void
+	 */
+	private function error_403() {
+		$message = apply_filters('wp_router_access_denied_message', self::__('You are not authorized to access this page'));
+		$title = apply_filters('wp_router_access_denied_title', self::__('Access Denied'));
+		$args = apply_filters('wp_router_access_denied_args', array( 'response' => 403 ));
+		wp_die($message, $title, $args);
+		exit();
+	}
+
+	/**
+	 * Redirect to the login page
+	 * 
+	 * @return void
+	 */
+	private function login_redirect() {
+		$url = wp_login_url($_SERVER['REQUEST_URI']);
+		wp_redirect($url);
+		exit;
 	}
 
 	private function get_query_args( WP $query, $callback_type = 'page' ) {

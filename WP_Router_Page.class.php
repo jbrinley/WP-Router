@@ -8,11 +8,11 @@
 class WP_Router_Page extends WP_Router_Utility {
 	const POST_TYPE = 'wp_router_page';
 	
-	private static $rewrite_slug = 'WP_Router';
-	private static $post_id = 0; // The ID of the post this plugin uses
+	protected static $rewrite_slug = 'WP_Router';
+	protected static $post_id = 0; // The ID of the post this plugin uses
 
-	private $contents = '';
-	private $title = '';
+	protected $contents = '';
+	protected $title = '';
 	
 	public static function init() {
 		self::register_post_type();
@@ -50,7 +50,7 @@ class WP_Router_Page extends WP_Router_Utility {
 	 * @static
 	 * @return int
 	 */
-	private static function get_post_id() {
+	protected static function get_post_id() {
 		if ( !self::$post_id ) {
 			$posts = get_posts(array(
 				'post_type' => self::POST_TYPE,

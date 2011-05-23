@@ -50,7 +50,7 @@ function WP_Router_load() {
 			add_action(WP_Router_Utility::PLUGIN_INIT_HOOK, array('WP_Router_Page', 'init'), 0, 0);
 			add_action(WP_Router_Utility::PLUGIN_INIT_HOOK, array('WP_Router', 'init'), 1, 0);
 
-
+			// Sample page
 			require_once 'WP_Router_Sample.class.php';
 			add_action(WP_Router_Utility::PLUGIN_INIT_HOOK, array('WP_Router_Sample', 'init'), 1, 0);
 		} else {
