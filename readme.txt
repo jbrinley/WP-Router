@@ -4,7 +4,7 @@ Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_i
 Tags: URL mapping, callback functions
 Requires at least: 3.1
 Tested up to: 3.1
-Stable tag: 0.1
+Stable tag: trunk
 
 Provides a simple API for mapping requests to callback functions.
 
