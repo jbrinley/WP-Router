@@ -34,7 +34,7 @@ class WP_Router_Utility {
 	 * @return void
 	 */
 	public static function _e( $string ) {
-		return _e($string, self::TEXT_DOMAIN);
+		_e($string, self::TEXT_DOMAIN);
 	}
 
 	/**
