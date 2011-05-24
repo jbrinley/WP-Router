@@ -17,7 +17,7 @@ class WP_Route extends WP_Router_Utility {
 	private $page_arguments = array();
 	private $access_callback = TRUE;
 	private $access_arguments = array();
-	private $template = '';
+	private $template = array();
 	private $properties = array();
 
 	/**
@@ -109,9 +109,9 @@ class WP_Route extends WP_Router_Utility {
 
 		$title = $this->get_title($query);
 
-		$page = new WP_Router_Page($page_contents, $title);
+		$template = $this->choose_template();
 
-		// TODO: do something with the template
+		$page = new WP_Router_Page($page_contents, $title, $template);
 	}
 
 	/**
@@ -270,5 +270,51 @@ class WP_Route extends WP_Router_Utility {
 		global $wp_rewrite;
 		$wp_rewrite->matches = 'matches'; // because it may not be set, yet
 		return $wp_rewrite->preg_index($int);
+	}
+
+	private function choose_template() {
+		$template = '';
+		$extra = array(
+			'route-$id.php',
+			'route.php',
+			'page-$id.php',
+			'page.php',
+		);
+		if ( $this->template ) {
+			foreach ( (array) $this->template as $path ) {
+				$path = str_replace('$id', $this->id, $path);
+				if ( $this->is_absolute_path($path) ) {
+					if ( file_exists($path) ) {
+						$template = $path;
+						break;
+					}
+				} else { // relative path, look in the theme
+					$template = locate_template(array($path));
+					if ( $template ) {
+						break;
+					}
+				}
+			}
+		}
+		foreach ( $extra as $key => $path ) {
+			$extra[$key] = str_replace('$id', $this->id, $path);
+		}
+		if ( !$template ) {
+			$template = locate_template($extra);
+		}
+		return $template;
+	}
+
+	private function is_absolute_path( $filename ) {
+		$char_1 = substr($filename, 0, 1);
+		if ( $char_1 == '/' || $char_1 == '\\' ) {
+			return TRUE; // unix absolute path
+		}
+		$char_2 = substr($filename, 1, 1);
+		$char_3 = substr($filename, 2, 1);
+		if ( ctype_alpha($char_1) && $char_2 == ':' && ( $char_3 == '/' || $char_3 == '\\') ) {
+			return TRUE; // windows absolute path
+		}
+		return FALSE;
 	}
 }

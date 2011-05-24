@@ -13,6 +13,7 @@ class WP_Router_Page extends WP_Router_Utility {
 
 	protected $contents = '';
 	protected $title = '';
+	protected $template = '';
 	
 	public static function init() {
 		self::register_post_type();
@@ -85,14 +86,21 @@ class WP_Router_Page extends WP_Router_Utility {
 		return $id;
 	}
 
-	public function __construct( $contents, $title ) {
+	public function __construct( $contents, $title, $template = '' ) {
 		$this->contents = $contents;
 		$this->title = $title;
+		$this->template = $template;
+		$this->add_hooks();
+	}
 
+	protected function add_hooks() {
 		add_action('pre_get_posts', array($this, 'edit_query'), 10, 1);
 		add_action('the_post', array($this, 'set_post_contents'), 10, 1);
 		add_filter('the_title', array($this, 'get_title'), 10, 2);
 		add_filter('single_post_title', array($this, 'get_single_post_title'), 10, 2);
+		if ( $this->template ) {
+			add_filter('template_include', array($this, 'override_template'), 10, 1);
+		}
 	}
 
 	/**
@@ -143,5 +151,12 @@ class WP_Router_Page extends WP_Router_Utility {
 
 	public function get_single_post_title( $title, $post ) {
 		return $this->get_title($title, $post->ID);
+	}
+
+	public function override_template( $template ) {
+		if ( $this->template && file_exists($template) ) { // these checks shouldn't be necessary, but no harm
+			return $this->template;
+		}
+		return $template;
 	}
 }
