@@ -5,7 +5,7 @@ Plugin URI: http://www.adeliedesign.com/
 Description: Provides a simple API for mapping requests to callback functions.
 Author: Adelie Design
 Author URI: http://www.adeliedesign.com/
-Version: 0.1
+Version: 0.2
 */
 /*
 Copyright (c) 2011 Adelie Design, Inc. http://www.AdelieDesign.com/

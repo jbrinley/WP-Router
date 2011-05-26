@@ -190,7 +190,7 @@ class WP_Router extends WP_Router_Utility {
 	 * @param WP|WP_Query $query
 	 * @return string|NULL
 	 */
-	private function identify_route( $query ) {
+	protected function identify_route( $query ) {
 		if ( !isset($query->query_vars[self::QUERY_VAR]) ) {
 			return NULL;
 		}
@@ -225,7 +225,7 @@ class WP_Router extends WP_Router_Utility {
 	 *
 	 * @return array
 	 */
-	private function rewrite_rules() {
+	protected function rewrite_rules() {
 		$rules = array();
 		foreach ( $this->routes as $id => $route ) {
 			$rules = array_merge($rules, $route->rewrite_rules());
@@ -238,7 +238,7 @@ class WP_Router extends WP_Router_Utility {
 	 *
 	 * @return array
 	 */
-	private function query_vars() {
+	protected function query_vars() {
 		$vars = array();
 		foreach ( $this->routes as $id => $route ) {
 			$vars = array_merge($vars, $route->get_query_vars());
@@ -253,7 +253,7 @@ class WP_Router extends WP_Router_Utility {
 	 * @param array $rules
 	 * @return string
 	 */
-	private function hash( $rules ) {
+	protected function hash( $rules ) {
 		return md5(serialize($rules));
 	}
 
@@ -262,7 +262,7 @@ class WP_Router extends WP_Router_Utility {
 	 * 
 	 * @return void
 	 */
-	private function flush_rewrite_rules() {
+	protected function flush_rewrite_rules() {
 		flush_rewrite_rules();
 	}
 }

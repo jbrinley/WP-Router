@@ -6,19 +6,19 @@
  */
  
 class WP_Route extends WP_Router_Utility {
-	private $id = '';
-	private $path = '';
-	private $query_vars = array();
-	private $wp_rewrite = '';
-	private $title = '';
-	private $title_callback = '__';
-	private $title_arguments = array();
-	private $page_callback = '';
-	private $page_arguments = array();
-	private $access_callback = TRUE;
-	private $access_arguments = array();
-	private $template = '';
-	private $properties = array();
+	protected $id = '';
+	protected $path = '';
+	protected $query_vars = array();
+	protected $wp_rewrite = '';
+	protected $title = '';
+	protected $title_callback = '__';
+	protected $title_arguments = array();
+	protected $page_callback = '';
+	protected $page_arguments = array();
+	protected $access_callback = TRUE;
+	protected $access_arguments = array();
+	protected $template = array();
+	protected $properties = array();
 
 	/**
 	 * @throws Exception
@@ -109,9 +109,9 @@ class WP_Route extends WP_Router_Utility {
 
 		$title = $this->get_title($query);
 
-		$page = new WP_Router_Page($page_contents, $title);
+		$template = $this->choose_template();
 
-		// TODO: do something with the template
+		$page = new WP_Router_Page($page_contents, $title, $template);
 	}
 
 	/**
@@ -131,7 +131,7 @@ class WP_Route extends WP_Router_Utility {
 		return array_keys($this->query_vars);
 	}
 
-	private function get_page( WP $query ) {
+	protected function get_page( WP $query ) {
 		if ( !is_callable($this->page_callback) ) {
 			return FALSE; // can't call it
 		}
@@ -147,7 +147,7 @@ class WP_Route extends WP_Router_Utility {
 		return $echoed.$returned;
 	}
 
-	private function get_title( WP $query ) {
+	protected function get_title( WP $query ) {
 		if ( !is_callable($this->title_callback) ) {
 			return $this->title; // can't call it
 		}
@@ -164,7 +164,7 @@ class WP_Route extends WP_Router_Utility {
 		return $title;
 	}
 
-	private function check_access( WP $query ) {
+	protected function check_access( WP $query ) {
 		if ( $this->access_callback === FALSE ) {
 			return FALSE; // nobody gets in
 		}
@@ -180,7 +180,7 @@ class WP_Route extends WP_Router_Utility {
 	 *
 	 * @return void
 	 */
-	private function access_denied() {
+	protected function access_denied() {
 		$user_id = get_current_user_id();
 		if ( $user_id ) {
 			$this->error_403();
@@ -194,7 +194,7 @@ class WP_Route extends WP_Router_Utility {
 	 *
 	 * @return void
 	 */
-	private function error_403() {
+	protected function error_403() {
 		$message = apply_filters('wp_router_access_denied_message', self::__('You are not authorized to access this page'));
 		$title = apply_filters('wp_router_access_denied_title', self::__('Access Denied'));
 		$args = apply_filters('wp_router_access_denied_args', array( 'response' => 403 ));
@@ -207,13 +207,13 @@ class WP_Route extends WP_Router_Utility {
 	 * 
 	 * @return void
 	 */
-	private function login_redirect() {
+	protected function login_redirect() {
 		$url = wp_login_url($_SERVER['REQUEST_URI']);
 		wp_redirect($url);
 		exit;
 	}
 
-	private function get_query_args( WP $query, $callback_type = 'page' ) {
+	protected function get_query_args( WP $query, $callback_type = 'page' ) {
 		$property = $callback_type.'_arguments';
 		$args = array();
 		if ( $this->$property ) {
@@ -232,7 +232,7 @@ class WP_Route extends WP_Router_Utility {
 		return $args;
 	}
 
-	private function is_a_query_var( $var, WP $query ) {
+	protected function is_a_query_var( $var, WP $query ) {
 		// $query->public_query_vars should be set and filtered before we get here
 		if ( in_array($var, $query->public_query_vars) ) {
 			return TRUE;
@@ -245,7 +245,7 @@ class WP_Route extends WP_Router_Utility {
 	 *
 	 * @return void
 	 */
-	private function generate_rewrite() {
+	protected function generate_rewrite() {
 		$rule = "index.php?";
 		$vars = array();
 		foreach ( $this->query_vars as $var => $value ) {
@@ -270,5 +270,51 @@ class WP_Route extends WP_Router_Utility {
 		global $wp_rewrite;
 		$wp_rewrite->matches = 'matches'; // because it may not be set, yet
 		return $wp_rewrite->preg_index($int);
+	}
+
+	protected function choose_template() {
+		$template = '';
+		$extra = array(
+			'route-$id.php',
+			'route.php',
+			'page-$id.php',
+			'page.php',
+		);
+		if ( $this->template ) {
+			foreach ( (array) $this->template as $path ) {
+				$path = str_replace('$id', $this->id, $path);
+				if ( $this->is_absolute_path($path) ) {
+					if ( file_exists($path) ) {
+						$template = $path;
+						break;
+					}
+				} else { // relative path, look in the theme
+					$template = locate_template(array($path));
+					if ( $template ) {
+						break;
+					}
+				}
+			}
+		}
+		foreach ( $extra as $key => $path ) {
+			$extra[$key] = str_replace('$id', $this->id, $path);
+		}
+		if ( !$template ) {
+			$template = locate_template($extra);
+		}
+		return $template;
+	}
+
+	protected function is_absolute_path( $filename ) {
+		$char_1 = substr($filename, 0, 1);
+		if ( $char_1 == '/' || $char_1 == '\\' ) {
+			return TRUE; // unix absolute path
+		}
+		$char_2 = substr($filename, 1, 1);
+		$char_3 = substr($filename, 2, 1);
+		if ( ctype_alpha($char_1) && $char_2 == ':' && ( $char_3 == '/' || $char_3 == '\\') ) {
+			return TRUE; // windows absolute path
+		}
+		return FALSE;
 	}
 }
