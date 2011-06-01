@@ -107,9 +107,14 @@ class WP_Route extends WP_Router_Utility {
 			return; // callback explicitly told us not to do anything with output
 		}
 
-		$title = $this->get_title($query);
-
 		$template = $this->choose_template();
+
+		if ( $template === FALSE ) {
+			print $page_contents;
+			exit();
+		}
+
+		$title = $this->get_title($query);
 
 		$page = new WP_Router_Page($page_contents, $title, $template);
 	}
@@ -273,6 +278,9 @@ class WP_Route extends WP_Router_Utility {
 	}
 
 	protected function choose_template() {
+		if ( $this->template === FALSE ) {
+			return FALSE;
+		}
 		$template = '';
 		$extra = array(
 			'route-$id.php',

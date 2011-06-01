@@ -74,7 +74,9 @@ Created by [Adelie Design](http://www.AdelieDesign.com)
 			is absolute, it will be used as-is; relative paths allow for overrides by the theme.
 			The string `$id` will be replaced with the ID of the route. If no template is found,
 			fallback templates are (in this order): `route-$id.php`, `route.php`, `page-$id.php`,
-			`page.php`, `index.php`.
+			`page.php`, `index.php`. If FALSE is given instead of an array, the page contents will
+			be printed before calling `exit()` (you can also accomplish this by printing your output
+			and exiting directly from your callback function).
 
 Example:
 `$router->add_route('wp-router-sample', array(
