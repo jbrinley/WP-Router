@@ -148,3 +148,8 @@ Creating or changing routes should always occur in the context of the `wp_router
 = 0.2 =
 
 * Added the `template` argument
+
+= 0.3 =
+
+* Added `FALSE` option to template parameter to indicate immediate `exit()`
+* Added option to specify different callback functions depending on the HTTP request method
