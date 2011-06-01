@@ -60,6 +60,11 @@ Created by [Adelie Design](http://www.AdelieDesign.com)
 			be handed back to WordPress. The callback will be called during the `parse_request`
 			phase of WordPress's page load. If `access_callback` returns `FALSE`, `page_callback`
 			will not be called.
+
+			`page_callback` can be either a single callback function or an array specifying
+			callback functions for specific HTTP methods (e.g., `GET`, `POST`, `PUT`, `DELETE`, etc.).
+			If the latter, the `default` key will be used if no other keys match the current
+			request method.
 		* `page_arguments` - An array of query variables whose values will be passed as
 			arguments to `page_callback`. If an argument is not a registered query variable,
 			it will be passed as-is.
