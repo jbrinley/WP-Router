@@ -5,7 +5,7 @@ Plugin URI: http://www.adeliedesign.com/
 Description: Provides a simple API for mapping requests to callback functions.
 Author: Adelie Design
 Author URI: http://www.adeliedesign.com/
-Version: 0.2
+Version: 0.3
 */
 /*
 Copyright (c) 2011 Adelie Design, Inc. http://www.AdelieDesign.com/
@@ -36,8 +36,8 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  *
  * @return void
  */
-function WP_Router_load() {
-	if ( !class_exists('WP_Router') ) {
+if ( !function_exists('WP_Router_load') ) {
+	function WP_Router_load() {
 		// load the base class
 		require_once 'WP_Router_Utility.class.php';
 
@@ -58,7 +58,6 @@ function WP_Router_load() {
 			add_action('admin_head', array('WP_Router_Utility', 'failed_to_load_notices'), 0, 0);
 		}
 	}
+	// Fire it up!
+	WP_Router_load();
 }
-
-// Fire it up!
-WP_Router_load();

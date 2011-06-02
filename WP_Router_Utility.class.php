@@ -11,8 +11,7 @@ class WP_Router_Utility {
 	const TEXT_DOMAIN = 'wp-router';
 	const DEBUG = FALSE;
 	const MIN_PHP_VERSION = '5.2';
-	const MIN_WP_VERSION = '3.1';
-	const VERSION = '0.1';
+	const MIN_WP_VERSION = '3.0';
 	const DB_VERSION = 1;
 	const PLUGIN_INIT_HOOK = 'wp_router_init';
 

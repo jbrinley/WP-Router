@@ -107,9 +107,14 @@ class WP_Route extends WP_Router_Utility {
 			return; // callback explicitly told us not to do anything with output
 		}
 
-		$title = $this->get_title($query);
-
 		$template = $this->choose_template();
+
+		if ( $template === FALSE ) {
+			print $page_contents;
+			exit();
+		}
+
+		$title = $this->get_title($query);
 
 		$page = new WP_Router_Page($page_contents, $title, $template);
 	}
@@ -131,9 +136,37 @@ class WP_Route extends WP_Router_Utility {
 		return array_keys($this->query_vars);
 	}
 
+	/**
+	 * Get the appropriate callback function for the route, taking the HTTP method into account
+	 *
+	 * @return bool|string
+	 */
+	protected function get_callback( $possibilities ) {
+		if ( is_callable($possibilities) ) {
+			return $possibilities;
+		}
+		if ( is_array($possibilities) ) {
+			$method = $_SERVER['REQUEST_METHOD'];
+			if ( $method && isset($possibilities[$method]) && is_callable($possibilities[$method]) ) {
+				return $possibilities[$method];
+			}
+			if ( isset($possibilities['default']) && is_callable($possibilities['default']) ) {
+				return $possibilities['default'];
+			}
+		}
+		return FALSE;
+	}
+
+	/**
+	 * Get the contents of the page
+	 *
+	 * @param WP $query
+	 * @return bool|string
+	 */
 	protected function get_page( WP $query ) {
-		if ( !is_callable($this->page_callback) ) {
-			return FALSE; // can't call it
+		$callback = $this->get_callback($this->page_callback);
+		if ( !$callback ) {
+			return FALSE;
 		}
 		$args = $this->get_query_args($query, 'page');
 		ob_start();
@@ -148,7 +181,8 @@ class WP_Route extends WP_Router_Utility {
 	}
 
 	protected function get_title( WP $query ) {
-		if ( !is_callable($this->title_callback) ) {
+		$callback = $this->get_callback($this->title_callback);
+		if ( !$callback ) {
 			return $this->title; // can't call it
 		}
 		$args = $this->get_query_args($query, 'title');
@@ -165,7 +199,11 @@ class WP_Route extends WP_Router_Utility {
 	}
 
 	protected function check_access( WP $query ) {
-		if ( $this->access_callback === FALSE ) {
+		if ( $this->access_callback === TRUE ) {
+			return TRUE;
+		}
+		$callback = $this->get_callback($this->access_callback);
+		if ( !$callback ) {
 			return FALSE; // nobody gets in
 		}
 		if ( is_callable($this->access_callback) ) {
@@ -273,6 +311,9 @@ class WP_Route extends WP_Router_Utility {
 	}
 
 	protected function choose_template() {
+		if ( $this->template === FALSE ) {
+			return FALSE;
+		}
 		$template = '';
 		$extra = array(
 			'route-$id.php',

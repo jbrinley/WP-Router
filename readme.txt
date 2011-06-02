@@ -2,7 +2,7 @@
 Contributors: jbrinley
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A69NZPKWGB6H2
 Tags: URL mapping, callback functions
-Requires at least: 3.1
+Requires at least: 3.0
 Tested up to: 3.1
 Stable tag: trunk
 
@@ -44,15 +44,26 @@ Created by [Adelie Design](http://www.AdelieDesign.com)
 		Any omitted argument will use the default value.
 		* `path` (required) - A regular expression to match against the request path.
 			This corresponds to the array key you would use when creating rewrite rules for WordPress.
+
 		* `query_vars` - An associative array, with the keys being query vars, and the
-			values being explicit strings or integers corresponding to matches in the path regexp. Any query variables included here will be automatically registered.
+			values being explicit strings or integers corresponding to matches in the path regexp.
+			 Any query variables included here will be automatically registered.
+
 		* `title` - The title of the page.
+
 		* `title_callback` - A callback to use for dynamically generating the title.
 			Defaults to `__()`. If `NULL`, the `title` argument will be used as-is. if
 			`page_callback` or `access_callback` returns `FALSE`, `title_callback` will not be called.
+
+			`title_callback` can be either a single callback function or an array specifying
+			callback functions for specific HTTP methods (e.g., `GET`, `POST`, `PUT`, `DELETE`, etc.).
+			If the latter, the `default` key will be used if no other keys match the current
+			request method.
+
 		* `title_arguments` - An array of query variables whose values will be passed
 			as arguments to `title_callback`. Defaults to the value of `title`. If an argument
 			is not a registered query variable, it will be passed as-is.
+
 		* `page_callback` (required) - A callback to use for dynamically generating the
 			contents of the page. The callback should either echo or return the contents of
 			the page (if both, the returned value will be appended to the echoed value). If
@@ -60,21 +71,37 @@ Created by [Adelie Design](http://www.AdelieDesign.com)
 			be handed back to WordPress. The callback will be called during the `parse_request`
 			phase of WordPress's page load. If `access_callback` returns `FALSE`, `page_callback`
 			will not be called.
+
+			`page_callback` can be either a single callback function or an array specifying
+			callback functions for specific HTTP methods (e.g., `GET`, `POST`, `PUT`, `DELETE`, etc.).
+			If the latter, the `default` key will be used if no other keys match the current
+			request method.
+
 		* `page_arguments` - An array of query variables whose values will be passed as
 			arguments to `page_callback`. If an argument is not a registered query variable,
 			it will be passed as-is.
+
 		* `access_callback` - A callback to determine if the user has permission to access
 			this page. If `access_arguments` is provided, default is `current_user_can`, otherwise
 			default is `TRUE`. If the callback returns `FALSE`, anonymous users are redirected to
 			the login page, authenticated users get a 403 error.
+
+			`access_callback` can be either a single callback function or an array specifying
+			callback functions for specific HTTP methods (e.g., `GET`, `POST`, `PUT`, `DELETE`, etc.).
+			If the latter, the `default` key will be used if no other keys match the current
+			request method.
+
 		* `access_arguments` - An array of query variables whose values will be passed
 			as arguments to `access_callback`. If an argument is not a registered query variable,
 			it will be passed as-is.
+
 		* `template` - An array of templates that can be used to display the page. If a path
 			is absolute, it will be used as-is; relative paths allow for overrides by the theme.
 			The string `$id` will be replaced with the ID of the route. If no template is found,
 			fallback templates are (in this order): `route-$id.php`, `route.php`, `page-$id.php`,
-			`page.php`, `index.php`.
+			`page.php`, `index.php`. If FALSE is given instead of an array, the page contents will
+			be printed before calling `exit()` (you can also accomplish this by printing your output
+			and exiting directly from your callback function).
 
 Example:
 `$router->add_route('wp-router-sample', array(
@@ -121,3 +148,9 @@ Creating or changing routes should always occur in the context of the `wp_router
 = 0.2 =
 
 * Added the `template` argument
+
+= 0.3 =
+
+* Added `FALSE` option to template parameter to indicate immediate `exit()`
+* Added option to specify different callback functions depending on the HTTP request method
+* Verified compatibility with WordPress 3.0

@@ -149,10 +149,27 @@ class WP_Router_Page extends WP_Router_Utility {
 		return $title;
 	}
 
-	public function get_single_post_title( $title, $post ) {
+	/**
+	 * Set the title for the placeholder page (again)
+	 *
+	 * @param string $title
+	 * @param object $post
+	 * @return string
+	 */
+	public function get_single_post_title( $title, $post = NULL ) {
+		// in WP 3.0.x, $post might be NULL. Not true in WP 3.1
+		if ( !$post ) {
+			$post = $GLOBALS['post'];
+		}
 		return $this->get_title($title, $post->ID);
 	}
 
+	/**
+	 * Use the specified template file
+	 *
+	 * @param string $template
+	 * @return string
+	 */
 	public function override_template( $template ) {
 		if ( $this->template && file_exists($template) ) { // these checks shouldn't be necessary, but no harm
 			return $this->template;
