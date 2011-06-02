@@ -153,3 +153,4 @@ Creating or changing routes should always occur in the context of the `wp_router
 
 * Added `FALSE` option to template parameter to indicate immediate `exit()`
 * Added option to specify different callback functions depending on the HTTP request method
+* Verified compatibility with WordPress 3.0
