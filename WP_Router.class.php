@@ -90,6 +90,15 @@ class WP_Router extends WP_Router_Utility {
 		}
 	}
 
+	public function get_url( $route_id, $arguments ) {
+		$route = $this->get_route($route_id);
+		if ( !$route ) {
+			return home_url();
+		} else {
+			return $route->url($arguments);
+		}
+	}
+
 	/****************************************************
 	 * PLUMBING
 	 ****************************************************/

@@ -120,6 +120,20 @@ class WP_Route extends WP_Router_Utility {
 	}
 
 	/**
+	 * Return the URL for this route, with the given arguments
+	 *
+	 * @todo This currently only returns the non-pretty URL. If
+	 *       using permalinks, it should be a pretty URL based on
+	 *       $this->path
+	 * @param array $args
+	 * @return string
+	 */
+	public function url( $args = array() ) {
+		$args[self::QUERY_VAR] = $this->id;
+		return add_query_arg($args, trailingslashit(home_url()));
+	}
+
+	/**
 	 * @return array WordPress rewrite rules that should point to this instance's callback
 	 */
 	public function rewrite_rules() {

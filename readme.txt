@@ -136,6 +136,7 @@ Creating or changing routes should always occur in the context of the `wp_router
 	not given in `$changes` will be left unaltered.
 * `WP_Router::remove_route( string $id )` - delete the route with the given ID
 * `WP_Router::get_route( string $id )` - get the `WP_Route` object for the given ID
+* `WP_Router::get_url( string $id, array $arguments )` - get the URL to reach the route with the given ID, with the given query variables and their values
 * `WP_Route::get( string $property )` - get the value of the specified property for
 	the `WP_Route` instance
 
@@ -154,3 +155,4 @@ Creating or changing routes should always occur in the context of the `wp_router
 * Added `FALSE` option to template parameter to indicate immediate `exit()`
 * Added option to specify different callback functions depending on the HTTP request method
 * Verified compatibility with WordPress 3.0
+* Added WP_Router::get_url() function
