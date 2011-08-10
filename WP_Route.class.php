@@ -184,7 +184,7 @@ class WP_Route extends WP_Router_Utility {
 		}
 		$args = $this->get_query_args($query, 'page');
 		ob_start();
-		$returned = call_user_func_array($this->page_callback, $args);
+		$returned = call_user_func_array($callback, $args);
 		$echoed = ob_get_clean();
 
 		if ( $returned === FALSE ) {
@@ -220,9 +220,9 @@ class WP_Route extends WP_Router_Utility {
 		if ( !$callback ) {
 			return FALSE; // nobody gets in
 		}
-		if ( is_callable($this->access_callback) ) {
+		if ( is_callable($callback) ) {
 			$args = $this->get_query_args($query, 'access');
-			return (bool)call_user_func_array($this->access_callback, $args);
+			return (bool)call_user_func_array($callback, $args);
 		}
 		return (bool)$this->access_callback;
 	}
