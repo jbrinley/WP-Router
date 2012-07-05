@@ -41,7 +41,7 @@ class WP_Route extends WP_Router_Utility {
 			$this->set($property, $value);
 		}
 		
-		if ( $this->access_arguments && $properties['access_callback'] ) {
+		if ( $this->access_arguments && !$properties['access_callback'] ) {
 			$this->set('access_callback', 'current_user_can');
 		}
 
