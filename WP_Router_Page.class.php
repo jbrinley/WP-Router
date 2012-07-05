@@ -176,4 +176,21 @@ class WP_Router_Page extends WP_Router_Utility {
 		}
 		return $template;
 	}
+
+	/**
+	 * If %category% is in the permastruct, WordPress will try to redirect
+	 * all router pages to the URL for the dummy page. This should
+	 * stop that from happening
+	 *
+	 * @see redirect_canonical()
+	 * @param string $redirect_url
+	 * @param string $requested_url
+	 * @return bool
+	 */
+	public function override_redirect( $redirect_url, $requested_url ) {
+		if ( get_query_var('WP_Route') ) {
+			return FALSE;
+		}
+		return $redirect_url;
+	}
 }
