@@ -1,9 +1,4 @@
 <?php
-/**
- * User: jbrinley
- * Date: 5/18/11
- * Time: 12:29 PM
- */
  
 class WP_Router extends WP_Router_Utility {
 	const ROUTE_CACHE_OPTION = 'WP_Router_route_hash';
@@ -195,8 +190,23 @@ class WP_Router extends WP_Router_Utility {
 	 * @return
 	 */
 	public function parse_request( WP $query ) {
+		$this->redirect_placeholder($query);
 		if ( $id = $this->identify_route($query) ) {
 			$this->routes[$id]->execute($query);
+		}
+	}
+
+	/**
+	 * Redirect the placeholder page back to the front page
+	 *
+	 * @param WP|WP_Query $query
+	 */
+	protected function redirect_placeholder( $query ) {
+		// we'll only get a 'wp_router_page' query var when visiting
+		// the page for a WP Router post, and there's only one of those
+		if ( !empty( $query->query_vars[WP_Router_Page::POST_TYPE]) ) {
+			wp_redirect( home_url(), 303 );
+			exit();
 		}
 	}
 
