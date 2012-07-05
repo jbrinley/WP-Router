@@ -90,7 +90,14 @@ class WP_Router extends WP_Router_Utility {
 		}
 	}
 
-	public function get_url( $route_id, $arguments ) {
+	/**
+	 * Get the URL to access the given route with the given arguments
+	 * 
+	 * @param string $route_id
+	 * @param array $arguments
+	 * @return string The url to the route, or the home URL if the route doesn't exist
+	 */
+	public function get_url( $route_id, $arguments = array() ) {
 		$route = $this->get_route($route_id);
 		if ( !$route ) {
 			return home_url();
