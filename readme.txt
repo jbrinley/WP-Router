@@ -156,3 +156,18 @@ Creating or changing routes should always occur in the context of the `wp_router
 * Added option to specify different callback functions depending on the HTTP request method
 * Verified compatibility with WordPress 3.0
 * Added WP_Router::get_url() function
+
+= 0.3.1 =
+
+* Added WP_Router::get_url()
+* Added WP_Route::url()
+
+= 0.3.2 =
+
+* Make $arguments param optional for WP_Router::get_url() and WP_Router::url()
+
+= 0.3.3 =
+
+* Prevent redirect from all route pages when %category% is in the permastruct
+* Redirect placeholder page to the blog front page
+* Fix usage of translation functions
