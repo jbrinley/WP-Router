@@ -8,33 +8,11 @@
 class WP_Router_Utility {
 	const QUERY_VAR = 'WP_Route';
 	const PLUGIN_NAME = 'WP Router';
-	const TEXT_DOMAIN = 'wp-router';
 	const DEBUG = FALSE;
 	const MIN_PHP_VERSION = '5.2';
 	const MIN_WP_VERSION = '3.0';
 	const DB_VERSION = 1;
 	const PLUGIN_INIT_HOOK = 'wp_router_init';
-
-
-	/**
-	 * A wrapper around WP's __() to add the plugin's text domain
-	 *
-	 * @param string $string
-	 * @return string|void
-	 */
-	public static function __( $string ) {
-		return __($string, self::TEXT_DOMAIN);
-	}
-
-	/**
-	 * A wrapper around WP's _e() to add the plugin's text domain
-	 *
-	 * @param string $string
-	 * @return void
-	 */
-	public static function _e( $string ) {
-		_e($string, self::TEXT_DOMAIN);
-	}
 
 	/**
 	 * @static
@@ -68,7 +46,7 @@ class WP_Router_Utility {
 	}
 
 	public static function failed_to_load_notices( $php_version = self::MIN_PHP_VERSION, $wp_version = self::MIN_WP_VERSION ) {
-		printf( '<div class="error"><p>%s</p></div>', sprintf( self::__( '%1$s requires WordPress %2$s or higher and PHP %3$s or higher.' ), self::PLUGIN_NAME, $wp_version, $php_version ) );
+		printf( '<div class="error"><p>%s</p></div>', sprintf( __( '%1$s requires WordPress %2$s or higher and PHP %3$s or higher.', 'wp-router' ), self::PLUGIN_NAME, $wp_version, $php_version ) );
 	}
 
 	public static function init() {

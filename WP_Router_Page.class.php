@@ -75,7 +75,7 @@ class WP_Router_Page extends WP_Router_Utility {
 	 */
 	private static function make_post() {
 		$post = array(
-			'post_title' => self::__('WP Router Placeholder Page'),
+			'post_title' => __('WP Router Placeholder Page', 'wp-router'),
 			'post_status' => 'publish',
 			'post_type' => self::POST_TYPE,
 		);
