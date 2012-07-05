@@ -33,7 +33,7 @@ class WP_Route extends WP_Router_Utility {
 
 		foreach ( array('path', 'page_callback') as $property ) {
 			if ( !isset($properties[$property]) || !$properties[$property] ) {
-				throw new Exception(self::__("Missing $property"));
+				throw new Exception(sprintf(__("Missing %s", 'wp-router'), $property));
 			}
 		}
 		
@@ -60,7 +60,7 @@ class WP_Route extends WP_Router_Utility {
 		} elseif ( isset($this->properties[$property]) ) {
 			return $this->properties[$property];
 		} else {
-			throw new Exception(self::__("Property not found: $property."));
+			throw new Exception(sprintf(__("Property not found: %s.", 'wp-router'), $property));
 		}
 	}
 
@@ -74,10 +74,10 @@ class WP_Route extends WP_Router_Utility {
 	 */
 	public function set( $property, $value ) {
 		if ( in_array($property, array('id', 'path', 'page_callback')) && !$value ) {
-			throw new Exception(self::__("Invalid value for $property. Value may not be empty."));
+			throw new Exception(sprintf(__("Invalid value for %s. Value may not be empty.", 'wp-router'), $property));
 		}
 		if ( in_array($property, array('query_vars', 'title_arguments', 'page_arguments', 'access_arguments')) && !is_array($value) ) {
-			throw new Exception(self::__("Invalid value for $property: $value. Value must be an array."));
+			throw new Exception(sprintf(__('Invalid value for %1$s: %2$s. Value must be an array.'), $property, $value));
 		}
 		if ( isset($this->$property) ) {
 			$this->$property = $value;
@@ -247,8 +247,8 @@ class WP_Route extends WP_Router_Utility {
 	 * @return void
 	 */
 	protected function error_403() {
-		$message = apply_filters('wp_router_access_denied_message', self::__('You are not authorized to access this page'));
-		$title = apply_filters('wp_router_access_denied_title', self::__('Access Denied'));
+		$message = apply_filters('wp_router_access_denied_message', __('You are not authorized to access this page', 'wp-router'));
+		$title = apply_filters('wp_router_access_denied_title', __('Access Denied', 'wp-router'));
 		$args = apply_filters('wp_router_access_denied_args', array( 'response' => 403 ));
 		wp_die($message, $title, $args);
 		exit();
