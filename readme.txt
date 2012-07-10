@@ -171,3 +171,7 @@ Creating or changing routes should always occur in the context of the `wp_router
 * Prevent redirect from all route pages when %category% is in the permastruct
 * Redirect placeholder page to the blog front page
 * Fix usage of translation functions
+
+= 0.4 =
+
+* Prevent redirect from route pages with the "page" or "paged" query arg

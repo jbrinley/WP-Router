@@ -1,14 +1,14 @@
 <?php
 /*
 Plugin Name: WP Router
-Plugin URI: http://www.adeliedesign.com/
+Plugin URI: https://github.com/jbrinley/WP-Router
 Description: Provides a simple API for mapping requests to callback functions.
-Author: Adelie Design
-Author URI: http://www.adeliedesign.com/
-Version: 0.3.3
+Author: Flightless
+Author URI: http://flightless.us/
+Version: 0.4
 */
 /*
-Copyright (c) 2011 Adelie Design, Inc. http://www.AdelieDesign.com/
+Copyright (c) 2012 Flightless, Inc. http://flightless.us/
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
