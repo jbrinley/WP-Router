@@ -4,17 +4,17 @@
  * Date: 5/18/11
  * Time: 2:31 PM
  */
- 
+
 class WP_Router_Page extends WP_Router_Utility {
 	const POST_TYPE = 'wp_router_page';
-	
+
 	protected static $rewrite_slug = 'WP_Router';
 	protected static $post_id = 0; // The ID of the post this plugin uses
 
 	protected $contents = '';
 	protected $title = '';
 	protected $template = '';
-	
+
 	public static function init() {
 		self::register_post_type();
 	}
@@ -98,6 +98,7 @@ class WP_Router_Page extends WP_Router_Utility {
 		add_action('the_post', array($this, 'set_post_contents'), 10, 1);
 		add_filter('the_title', array($this, 'get_title'), 10, 2);
 		add_filter('single_post_title', array($this, 'get_single_post_title'), 10, 2);
+		add_filter('redirect_canonical', array($this, 'override_redirect'), 10, 2);
 		if ( $this->template ) {
 			add_filter('template_include', array($this, 'override_template'), 10, 1);
 		}
@@ -125,7 +126,7 @@ class WP_Router_Page extends WP_Router_Utility {
 
 	/**
 	 * Override the global $pages array to yield our content
-	 * 
+	 *
 	 * @param object $post
 	 * @return void
 	 */
@@ -178,17 +179,20 @@ class WP_Router_Page extends WP_Router_Utility {
 	}
 
 	/**
-	 * If %category% is in the permastruct, WordPress will try to redirect
-	 * all router pages to the URL for the dummy page. This should
-	 * stop that from happening
+	 * If asking for a paged router page, or if %category% is in
+	 * the permastruct, WordPress will try to redirect to the URL
+	 * for the dummy page. This should stop that from happening.
 	 *
-	 * @see redirect_canonical()
+	 * @wordpress-filter redirect_canonical
 	 * @param string $redirect_url
 	 * @param string $requested_url
 	 * @return bool
 	 */
 	public function override_redirect( $redirect_url, $requested_url ) {
-		if ( get_query_var('WP_Route') ) {
+		if ( $redirect_url && get_query_var('WP_Route') ) {
+			return FALSE;
+		}
+		if ( $redirect_url && get_permalink(self::get_post_id()) == $redirect_url ) {
 			return FALSE;
 		}
 		return $redirect_url;
