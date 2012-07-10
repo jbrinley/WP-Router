@@ -23,7 +23,7 @@ post types, query variables, rewrite rules, etc., and lets you write code to
 do what you want it to do. One function call is all it takes to map a
 URL to your designated callback function and display the return value in the page.
 
-Created by [Adelie Design](http://www.AdelieDesign.com)
+Created by [Flightless](http://flightless.us)
 
 == Installation ==
 
