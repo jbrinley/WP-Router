@@ -142,13 +142,30 @@ Creating or changing routes should always occur in the context of the `wp_router
 
 == Changelog ==
 
-= 0.1 =
+= 0.5 =
 
-* Initial version
+* Filter get_permalink on router pages to point to the requested URI
+* Filter post meta for the placeholder page when on a router page to provide a title to WP SEO
+* Added `wp_router_placeholder_postmeta` filter for adding additional meta to the placeholder page
 
-= 0.2 =
+= 0.4 =
 
-* Added the `template` argument
+* Prevent redirect from route pages with the "page" or "paged" query arg
+
+= 0.3.3 =
+
+* Prevent redirect from all route pages when %category% is in the permastruct
+* Redirect placeholder page to the blog front page
+* Fix usage of translation functions
+
+= 0.3.2 =
+
+* Make $arguments param optional for WP_Router::get_url() and WP_Router::url()
+
+= 0.3.1 =
+
+* Added WP_Router::get_url()
+* Added WP_Route::url()
 
 = 0.3 =
 
@@ -157,21 +174,10 @@ Creating or changing routes should always occur in the context of the `wp_router
 * Verified compatibility with WordPress 3.0
 * Added WP_Router::get_url() function
 
-= 0.3.1 =
+= 0.2 =
 
-* Added WP_Router::get_url()
-* Added WP_Route::url()
+* Added the `template` argument
 
-= 0.3.2 =
+= 0.1 =
 
-* Make $arguments param optional for WP_Router::get_url() and WP_Router::url()
-
-= 0.3.3 =
-
-* Prevent redirect from all route pages when %category% is in the permastruct
-* Redirect placeholder page to the blog front page
-* Fix usage of translation functions
-
-= 0.4 =
-
-* Prevent redirect from route pages with the "page" or "paged" query arg
+* Initial version
