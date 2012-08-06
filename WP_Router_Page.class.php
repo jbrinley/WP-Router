@@ -1,9 +1,4 @@
 <?php
-/**
- * User: jbrinley
- * Date: 5/18/11
- * Time: 2:31 PM
- */
 
 class WP_Router_Page extends WP_Router_Utility {
 	const POST_TYPE = 'wp_router_page';
@@ -14,6 +9,7 @@ class WP_Router_Page extends WP_Router_Utility {
 	protected $contents = '';
 	protected $title = '';
 	protected $template = '';
+	protected $meta = array();
 
 	public static function init() {
 		self::register_post_type();
@@ -99,6 +95,8 @@ class WP_Router_Page extends WP_Router_Utility {
 		add_filter('the_title', array($this, 'get_title'), 10, 2);
 		add_filter('single_post_title', array($this, 'get_single_post_title'), 10, 2);
 		add_filter('redirect_canonical', array($this, 'override_redirect'), 10, 2);
+		add_filter('get_post_metadata', array($this, 'set_post_meta'), 10, 4);
+		add_filter('post_type_link', array($this, 'override_permalink'), 10, 4);
 		if ( $this->template ) {
 			add_filter('template_include', array($this, 'override_template'), 10, 1);
 		}
@@ -196,5 +194,45 @@ class WP_Router_Page extends WP_Router_Utility {
 			return FALSE;
 		}
 		return $redirect_url;
+	}
+
+	/**
+	 * Some plugins expect certain data in post meta. It obviously
+	 * won't be there for the placeholder page. Let's pretend
+	 * it is there.
+	 *
+	 * @param array|null $meta
+	 * @param int $post_id
+	 * @param string $meta_key
+	 * @param bool $single
+	 * @return array
+	 */
+	public function set_post_meta( $meta, $post_id, $meta_key, $single ) {
+		if ( $post_id == self::get_post_id() ) {
+			if ( empty($this->meta) ) {
+				$this->meta = array(
+					'_yoast_wpseo_title' => array($this->get_title('', $post_id)),
+				);
+				$this->meta = apply_filters('wp_router_placeholder_postmeta', $this->meta);
+			}
+			if ( $meta_key ) {
+				if ( empty($this->meta[$meta_key]) ) {
+					return NULL;
+				}
+				return $this->meta[$meta_key];
+			}
+			return $this->meta;
+		}
+		return $meta;
+	}
+
+	public function override_permalink( $post_link, $post, $leavename, $sample ) {
+		if ( $post->ID == self::get_post_id() ) {
+			if ( $post->ID == get_queried_object_id() ) {
+				global $wp;
+				return home_url($wp->request);
+			}
+		}
+		return $post_link;
 	}
 }
