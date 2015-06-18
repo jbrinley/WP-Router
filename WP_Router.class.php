@@ -221,7 +221,7 @@ class WP_Router extends WP_Router_Utility {
 			return NULL;
 		}
 		$id = $query->query_vars[self::QUERY_VAR];
-		if ( !isset($this->routes[$id]) || !is_a($this->routes[$id], 'WP_Route') ) {
+		if ( !isset($this->routes[$id]) || ! $this->routes[$id] instanceof WP_Route ) {
 			return NULL;
 		}
 		return $id;
