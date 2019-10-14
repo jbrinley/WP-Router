@@ -1,5 +1,5 @@
 <?php
- 
+
 class WP_Router extends WP_Router_Utility {
 	const ROUTE_CACHE_OPTION = 'WP_Router_route_hash';
 	private $routes = array();
@@ -87,7 +87,7 @@ class WP_Router extends WP_Router_Utility {
 
 	/**
 	 * Get the URL to access the given route with the given arguments
-	 * 
+	 *
 	 * @param string $route_id
 	 * @param array $arguments
 	 * @return string The url to the route, or the home URL if the route doesn't exist
@@ -115,7 +115,7 @@ class WP_Router extends WP_Router_Utility {
 		}
 		return self::$instance;
 	}
-	
+
 	/**
 	 * Hook into WordPress
 	 */
@@ -126,12 +126,12 @@ class WP_Router extends WP_Router_Utility {
 		add_filter('query_vars', array($this, 'add_query_vars'), 10, 1);
 	}
 
-	private function __clone() {
+	public function __clone() {
 		// cannot be cloned
 		trigger_error(__CLASS__.' may not be cloned', E_USER_ERROR);
 	}
 
-	private function __sleep() {
+	public function __sleep() {
 		// cannot be serialized
 		trigger_error(__CLASS__.' may not be serialized', E_USER_ERROR);
 	}
@@ -285,7 +285,7 @@ class WP_Router extends WP_Router_Utility {
 
 	/**
 	 * Tell WordPress to flush its rewrite rules
-	 * 
+	 *
 	 * @return void
 	 */
 	protected function flush_rewrite_rules() {
