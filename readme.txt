@@ -3,7 +3,7 @@ Contributors: jbrinley
 Donate link: https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=A69NZPKWGB6H2
 Tags: URL mapping, callback functions
 Requires at least: 3.0
-Tested up to: 3.4
+Tested up to: 5.2.4
 Stable tag: trunk
 
 Provides a simple API for mapping requests to callback functions.
@@ -141,6 +141,10 @@ Creating or changing routes should always occur in the context of the `wp_router
 	the `WP_Route` instance
 
 == Changelog ==
+
+= 0.6 =
+
+* Make magic methods public to avoid fatal with PHP 7.3
 
 = 0.5 =
 

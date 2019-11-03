@@ -5,7 +5,7 @@ Plugin URI: https://github.com/jbrinley/WP-Router
 Description: Provides a simple API for mapping requests to callback functions.
 Author: Flightless
 Author URI: http://flightless.us/
-Version: 0.5
+Version: 0.6
 */
 /*
 Copyright (c) 2012 Flightless, Inc. http://flightless.us/
