@@ -145,6 +145,7 @@ Creating or changing routes should always occur in the context of the `wp_router
 = 0.6 =
 
 * Make magic methods public to avoid fatal with PHP 7.3
+* Add `composer.json` to ease others' including
 
 = 0.5 =
 

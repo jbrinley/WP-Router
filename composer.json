@@ -1,0 +1,15 @@
+{
+	"name": "jbrinley/wp-router",
+	"description": "Provides a simple API for mapping requests to callback functions.",
+	"type": "wordpress-plugin",
+	"authors": [
+		{
+			"name": "Jonathan Brinley",
+			"email": "jonathan@flightless.us"
+		}
+	],
+	"require": {
+		"php": ">=5.2.0"
+	},
+	"minimum-stability": "dev"
+}
